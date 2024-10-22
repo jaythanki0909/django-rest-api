@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status 
 from profiles_api import serializers 
+from rest_framework import viewsets
 
 class HelloApiView(APIView):
     """Test API View"""
@@ -24,3 +25,28 @@ class HelloApiView(APIView):
         
     def put(self,request,pk = None):
         return Response({'method':"PUT"})
+    
+
+class HelloViewSet(viewsets.ViewSet):
+
+    serlializer_class = serializers.HelloSerializer
+
+    def list(self,request):
+
+        a_viewset = ['test','test1','test2']
+        return Response({'message':'Hello','return':a_viewset})
+    
+    def create(self,request) :
+        serializer = self.serlializer_class(data =request.data)
+
+        if serializer.is_valid() :
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}'
+            return Response({'message':message})
+        else:
+            return Response(serializer.errors,status= status.HTTP_400_BAD_REQUEST)
+        
+    def retrieve(self,request, pk=None):
+        return Response({'message':'HTTP GET'})
+    
+    
